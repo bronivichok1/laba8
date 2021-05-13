@@ -25,7 +25,6 @@ public class ChatServlet extends HttpServlet {
         messages = (ArrayList<ChatMessage>)
                 getServletContext().getAttribute("messages");
 // Если карта пользователей не определена ...
-
         if (activeUsers==null) {
 // Создать новую карту
             activeUsers = new HashMap<String, ChatUser>();
@@ -44,4 +43,3 @@ public class ChatServlet extends HttpServlet {
         }
     }
 }
-

@@ -1,13 +1,17 @@
 package com.company.servlet;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Calendar;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Calendar;
+import com.company.entity.ChatMessage;
 import com.company.entity.ChatUser;
+
+@WebServlet(name = "LoginServlet",urlPatterns = "/login.do")
 public class LoginServlet extends ChatServlet {
     private static final long serialVersionUID = 1L;
     // Длительность сессии, в секундах
@@ -36,9 +40,7 @@ public class LoginServlet extends ChatServlet {
         String previousSessionId = null;
 // Если в сессии имя не сохранено, то попытаться
 // восстановить имя через cookie
-        if (name==null) {
-
-// Найти cookie с именем sessionId
+        if (name==null) {// Найти cookie с именем sessionId
             for (Cookie aCookie: request.getCookies()) {
                 if (aCookie.getName().equals("sessionId")) {
 // Запомнить значение этого cookie –
@@ -69,15 +71,16 @@ public class LoginServlet extends ChatServlet {
         response.setCharacterEncoding("utf8");
 // Получить поток вывода для HTTP-ответа
         PrintWriter pw = response.getWriter();
-        pw.println("<html><head><title>Мега-чат!</title><meta httpequiv='Content-Type' content='text/html; charset=utf-8'/></head>");
+        pw.println("<html><head><title>Мега-чат!</title><meta http-equiv='Content-Type' content='text/html; charset=utf-8'/></head>");
 // Если возникла ошибка - сообщить о ней
         if (errorMessage!=null) {
             pw.println("<p><font color='red'>" + errorMessage +
                     "</font></p>");
         }
 // Вывести форму
-        pw.println("<form action='/labaehkere8_war_exploded/' method='post'>Введите имя: " +
-                "<input type='text' name='name' value=''><input type='submit' value='Войти в чат'>");
+        pw.println("<form action='/labaehkere8_war_exploded/' " +
+                "method='post'>Введите имя: <input type='text' name='name' " +
+                "value=''><input type='submit' value='Войти в чат'>");
         pw.println("</form></body></html>");
 // Сбросить сообщение об ошибке в сессии
         request.getSession().setAttribute("error", null);
@@ -98,9 +101,7 @@ public class LoginServlet extends ChatServlet {
             errorMessage = "Имя пользователя не может быть пустым!";
         } else {
 // Если ия не пустое, то попытаться обработать запрос
-            errorMessage = processLogonAttempt(name, request, response);
-
-        }
+            errorMessage = processLogonAttempt(name, request, response);}
         if (errorMessage!=null) {
 // Сбросить имя пользователя в сессии
             request.getSession().setAttribute("name", null);
@@ -147,12 +148,18 @@ public class LoginServlet extends ChatServlet {
             response.addCookie(sessionIdCookie);
 // Перейти к главному окну чата
             response.sendRedirect(response.encodeRedirectURL("/labaehkere8_war_exploded/view.htm"));
+            // Добавить в список сообщений новое
+            synchronized (messages) {
+                messages.add(new ChatMessage("NEWUSERINTHECHAT", aUser,
+                        Calendar.getInstance().getTimeInMillis()));
+            }
 // Вернуть null, т.е. сообщений об ошибках нет
             return null;
         } else {
 // Сохранѐнное в сессии имя уже закреплено за кем-то другим.
 // Извиниться, отказать и попросить ввести другое имя
-            return "Извините, но имя <strong>" + name + "</strong> уже кем-то занято. Пожалуйста выберите другое имя!";
+            return "Извините, но имя <strong>" + name + "</strong> уже кем-то занято." +
+                    " Пожалуйста выберите другое имя!";
         }
     }
 }

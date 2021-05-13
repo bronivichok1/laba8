@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.company.entity.ChatUser;
+
 public class LogoutServlet extends ChatServlet {
     private static final long serialVersionUID = 1L;
 
@@ -45,4 +46,3 @@ public class LogoutServlet extends ChatServlet {
         }
     }
 }
-

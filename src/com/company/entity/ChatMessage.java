@@ -7,7 +7,6 @@ public class ChatMessage {
     private ChatUser author;
     // Временная метка сообщения (в микросекундах)
     private long timestamp;
-
     public ChatMessage(String message, ChatUser author, long timestamp) {
         super();
         this.message = message;
